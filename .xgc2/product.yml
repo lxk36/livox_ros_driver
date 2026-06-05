@@ -1,0 +1,30 @@
+schema: xgc2.product.v1
+id: livox-ros-driver
+name: Livox ROS Driver
+kind: ros1-apt
+summary: ROS1 Noetic package for the first-generation Livox ROS driver.
+
+ros:
+  distro: noetic
+  packages:
+    - livox_ros_driver
+
+apt:
+  distribution: focal
+  install:
+    - ros-noetic-livox-ros-driver
+  packages:
+    - ros-noetic-livox-ros-driver
+
+usage:
+  install: |
+    sudo apt update
+    sudo apt install ros-noetic-livox-ros-driver
+  smoke_test: |
+    rospack find livox_ros_driver
+
+ownership:
+  paths:
+    - /opt/ros/noetic/share/livox_ros_driver
+    - /opt/ros/noetic/include/livox_ros_driver
+    - /opt/ros/noetic/lib/livox_ros_driver
