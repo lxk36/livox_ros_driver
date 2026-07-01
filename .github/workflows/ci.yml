@@ -27,7 +27,6 @@ jobs:
 
   deb-build:
     name: Build deb (${{ matrix.arch }})
-    needs: package-compliance
     strategy:
       fail-fast: false
       matrix:
