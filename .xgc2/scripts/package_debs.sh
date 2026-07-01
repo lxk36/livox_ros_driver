@@ -1,15 +1,27 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+
 INSTALL_ROOT=""
 OUTPUT_DIR=""
 ROS_DISTRO="${ROS_DISTRO:-noetic}"
-VERSION="${PACKAGE_VERSION:-2.6.0-1}"
 ARCH="$(dpkg --print-architecture)"
 PACKAGE="ros-noetic-livox-ros-driver"
 ROS_PACKAGE="livox_ros_driver"
 PREFIX="/opt/ros/${ROS_DISTRO}"
 BUILD_DIR="$(mktemp -d)"
+
+product_version() {
+  awk -F': *' '/^version:[[:space:]]*/ {print $2; exit}' "${REPO_ROOT}/.xgc2/product.yml"
+}
+
+VERSION="${PACKAGE_VERSION:-$(product_version)}"
+if [[ -z "${VERSION}" ]]; then
+  echo "package version is missing; set PACKAGE_VERSION or .xgc2/product.yml version" >&2
+  exit 1
+fi
 
 cleanup() {
   rm -rf "${BUILD_DIR}"
