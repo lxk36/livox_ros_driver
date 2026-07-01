@@ -1,0 +1,54 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - noetic
+  pull_request:
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  package-compliance:
+    name: Package compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Check package metadata and packaging consistency
+        run: |
+          git diff --check HEAD
+          .xgc2/scripts/check_package_compliance.sh
+
+  deb-build:
+    name: Build deb (${{ matrix.arch }})
+    needs: package-compliance
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build deb package in Docker
+        run: |
+          .xgc2/scripts/build_debs_in_docker.sh \
+            --work-dir "$RUNNER_TEMP/livox-ros-driver-${{ matrix.arch }}" \
+            --output-dir "$GITHUB_WORKSPACE/debs" \
+            --skip-install-check
+
+      - name: Upload deb artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: livox-ros-driver-debs-${{ matrix.arch }}
+          path: debs/*.deb
