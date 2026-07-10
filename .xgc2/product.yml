@@ -1,7 +1,7 @@
 schema: xgc2.product.v1
 id: livox-ros-driver
 name: Livox ROS Driver
-version: 2.6.0-6
+version: 2.6.0-7
 kind: ros1-apt
 summary: ROS1 Noetic package for the first-generation Livox ROS driver.
 ros:
