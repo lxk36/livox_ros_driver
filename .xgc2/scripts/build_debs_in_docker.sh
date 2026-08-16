@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 
-DOCKER_IMAGE="${DOCKER_IMAGE:-ros:noetic-ros-base-focal}"
+DOCKER_IMAGE="${DOCKER_IMAGE:-ghcr.io/xgc-team/xgc2-images/xgc2-build-focal-full-noetic:1.0.0}"
 WORK_DIR="${WORK_DIR:-${REPO_ROOT}/.work/docker}"
 OUTPUT_DIR="${OUTPUT_DIR:-${REPO_ROOT}/debs}"
 INSTALL_CHECK="${INSTALL_CHECK:-true}"
@@ -50,26 +50,7 @@ docker run --rm \
     set -euo pipefail
     export DEBIAN_FRONTEND=noninteractive
 
-    apt-get update
-    apt-get install -y --no-install-recommends \
-      build-essential \
-      ca-certificates \
-      cmake \
-      dpkg-dev \
-      fakeroot \
-      git \
-      libapr1-dev \
-      libpcl-dev \
-      rsync \
-      ros-noetic-message-generation \
-      ros-noetic-message-runtime \
-      ros-noetic-pcl-ros \
-      ros-noetic-rosbag \
-      ros-noetic-roscpp \
-      ros-noetic-rospack \
-      ros-noetic-rospy \
-      ros-noetic-sensor-msgs \
-      ros-noetic-std-msgs
+    dpkg-query -W libapr1-dev libpcl-dev ros-noetic-pcl-ros >/dev/null
 
     rm -rf /tmp/Livox-SDK
     git clone --depth 1 https://github.com/Livox-SDK/Livox-SDK.git /tmp/Livox-SDK
